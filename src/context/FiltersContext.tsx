@@ -8,8 +8,15 @@ export const FiltersContextProvider: FC<IProvider> = ({ children }) => {
     models: " ",
     years: " ",
   });
+  const [options, setOptions] = useState({
+    brands: [{ label: "Marcas", value: " " }],
+    models: [{ label: "Modelos", value: " " }],
+    years: [{ label: "Anos", value: " " }],
+  });
   return (
-    <FiltersContext.Provider value={{ filters, setFilters }}>
+    <FiltersContext.Provider
+      value={{ filters, setFilters, options, setOptions }}
+    >
       {children}
     </FiltersContext.Provider>
   );
