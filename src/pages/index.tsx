@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Head from "next/head";
 import * as S from "@styles/pages/Home";
@@ -10,16 +11,15 @@ import { useRouter } from "next/router";
 import { FiltersContext } from "@context/FiltersContext";
 import { useGetYears } from "@services/GET/useGetYears";
 
-export default function Home() {
+export default function Home(props: { optionsBrands: IOptionsSelect[] }) {
   const { filters, setFilters, options, setOptions } = useContext(
     FiltersContext as Context<IContext>
   );
 
-  const { dataBrands } = useGetBrands();
   const { dataModels } = useGetModels(filters.brands);
-  const { dataYears } = useGetYears(filters)
+  const { dataYears } = useGetYears(filters);
 
-  const navigate = useRouter()
+  const navigate = useRouter();
 
   function getOptions(data: IResponse[], nameSelect: string) {
     if (data) {
@@ -31,14 +31,10 @@ export default function Home() {
   }
 
   function isButtonDisabled() {
-    if((filters.brands && filters.models && filters.years) !== ' '){ 
-      return false
-    } else return true
+    if ((filters.brands && filters.models && filters.years) !== " ") {
+      return false;
+    } else return true;
   }
-
-  useEffect(() => {
-    setOptions({ ...options, brands: getOptions(dataBrands, "Marcas") });
-  }, [dataBrands]);
 
   useEffect(() => {
     if (dataModels) {
@@ -60,7 +56,11 @@ export default function Home() {
 
   useEffect(() => {
     setFilters({ brands: " ", models: " ", years: " " });
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    console.log(props, "prrrrroooooops");
+  }, [props]);
 
   return (
     <S.Container>
@@ -79,7 +79,7 @@ export default function Home() {
             onChange={(event) => {
               setFilters({ ...filters, brands: event.target.value });
             }}
-            options={options.brands}
+            options={props.optionsBrands}
             value={filters.brands}
             defaultValue={filters.brands}
             maxWidth={"25rem"}
@@ -110,7 +110,7 @@ export default function Home() {
             backgroundColor="var(--color-purple)"
             disabled={isButtonDisabled()}
             onClick={() => {
-              navigate.push('/results')
+              navigate.push("/results");
             }}
             textColor="var(--color-white)"
             maxWidth="20rem"
@@ -121,4 +121,30 @@ export default function Home() {
       </S.SectionContainer>
     </S.Container>
   );
+}
+
+
+export async function getStaticProps() {
+  const data = await fetch(
+    "https://parallelum.com.br/fipe/api/v1/carros/marcas", {method: 'get'}
+  ).then((response) => {
+    return response.json();
+  });
+  
+  function getOptions(data: IResponse[], nameSelect: string) {
+    if (data) {
+      let options = data.map((element) => {
+        return { label: element.nome, value: element.codigo };
+      });
+      return [{ label: nameSelect, value: " " }, ...options];
+    } else return [{ label: nameSelect, value: " " }];
+  }
+
+  const optionsBrands = getOptions(data, "Marcas");
+
+  return {
+    props: {
+      optionsBrands,
+    },
+  };
 }
