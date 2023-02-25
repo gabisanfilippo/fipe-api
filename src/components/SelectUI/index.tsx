@@ -9,7 +9,7 @@ interface ISelect {
   id: string;
   value: any;
   onChange: (event: SelectChangeEvent) => void;
-  options: { label: string; value: any }[];
+  options: IOptionsSelect[];
   maxWidth?: string;
   defaultValue: any;
 }
