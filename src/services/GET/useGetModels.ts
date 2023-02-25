@@ -1,7 +1,7 @@
 import { API } from "@services/api";
 import { useQuery } from "react-query";
 
-async function getModelsAndYears(idBrand: number | string) {
+async function getModels(idBrand: number | string) {
   try {
     const { data } = await API.get(`/fipe/api/v1/carros/marcas/${idBrand}/modelos`);
     return data;
@@ -11,11 +11,11 @@ async function getModelsAndYears(idBrand: number | string) {
   }
 }
 
-export function useGetModelsAndYears(idBrand: number | string) {
+export function useGetModels(idBrand: number | string) {
   const { data, isLoading, isError } = useQuery(
     ["getModels", idBrand],
     async () => {
-      return await getModelsAndYears(idBrand);
+      return await getModels(idBrand);
     }
   );
   return {

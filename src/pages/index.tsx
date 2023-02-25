@@ -4,27 +4,22 @@ import * as S from "@styles/pages/Home";
 import { SelectUI } from "@components/SelectUI";
 import { Context, useContext, useEffect, useState } from "react";
 import { useGetBrands } from "@services/GET/useGetBrands";
-import { useGetModelsAndYears } from "@services/GET/useGetModelsAndYears";
+import { useGetModels } from "@services/GET/useGetModels";
 import { ButtonUI } from "@components/ButtonUI";
 import { useRouter } from "next/router";
 import { FiltersContext } from "@context/FiltersContext";
+import { useGetYears } from "@services/GET/useGetYears";
 
 export default function Home() {
-  const { filters, setFilters } = useContext(
+  const { filters, setFilters, options, setOptions } = useContext(
     FiltersContext as Context<IContext>
   );
-  
-  const [options, setOptions] = useState({
-    brands: [{ label: "Marcas", value: " " }],
-    models: [{ label: "Modelos", value: " " }],
-    years: [{ label: "Anos", value: " " }],
-  });
 
   const { dataBrands } = useGetBrands();
-  const { dataModels } = useGetModelsAndYears(filters.brands);
+  const { dataModels } = useGetModels(filters.brands);
+  const { dataYears } = useGetYears(filters)
 
   const navigate = useRouter()
-  
 
   function getOptions(data: IResponse[], nameSelect: string) {
     if (data) {
@@ -42,7 +37,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    setOptions({ ...options, brands: getOptions(dataBrands, 'Marcas') });
+    setOptions({ ...options, brands: getOptions(dataBrands, "Marcas") });
   }, [dataBrands]);
 
   useEffect(() => {
@@ -50,10 +45,22 @@ export default function Home() {
       setOptions({
         ...options,
         models: getOptions(dataModels.modelos, "Modelos"),
-        years: getOptions(dataModels.anos, "Anos"),
       });
     }
   }, [dataModels]);
+
+  useEffect(() => {
+    if (dataYears) {
+      setOptions({
+        ...options,
+        years: getOptions(dataYears, "Anos"),
+      });
+    }
+  }, [dataYears]);
+
+  useEffect(() => {
+    setFilters({ brands: " ", models: " ", years: " " });
+  }, [])
 
   return (
     <S.Container>
@@ -104,12 +111,6 @@ export default function Home() {
             disabled={isButtonDisabled()}
             onClick={() => {
               navigate.push('/results')
-              setFilters({ brands: " ", models: " ", years: " " });
-              setOptions({
-                brands: [{ label: "Marcas", value: " " }],
-                models: [{ label: "Modelos", value: " " }],
-                years: [{ label: "Anos", value: " " }],
-              });
             }}
             textColor="var(--color-white)"
             maxWidth="20rem"
