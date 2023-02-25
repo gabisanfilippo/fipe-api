@@ -16,13 +16,11 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@context/*": ["src/context/*"],
       "@services/*": ["src/services/*"],
       "@api": ["src/services/api"],
       "@styles/*": ["src/styles/*"],
-      "@utils/*": ["src/utils/*"],
       "@types/*": ["src/@types/*"]
     },
   },
