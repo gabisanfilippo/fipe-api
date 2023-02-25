@@ -10,6 +10,9 @@ const nextConfig = {
       { loader: "@next/font/google", options: { subsets: ["latin"] } },
     ],
   },
+  env: {
+    API: process.env.API,
+  },
 };
 
 module.exports = nextConfig
