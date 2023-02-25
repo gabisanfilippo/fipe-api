@@ -23,7 +23,7 @@
       "@api": ["src/services/api"],
       "@styles/*": ["src/styles/*"],
       "@utils/*": ["src/utils/*"],
-      "@interfaces/*": ["src/interfaces/*"]
+      "@types/*": ["src/@types/*"]
     },
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
