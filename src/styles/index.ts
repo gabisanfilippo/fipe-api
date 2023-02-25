@@ -18,27 +18,36 @@ export const GlobalStyle = createGlobalStyle`
     font-size: 1rem;
   }
   h6{
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 400;
   }
   h5{
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 500;
   }
   h4{
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 600;
   }
   h3{
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 700;
   }
   h2{
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 800;
   }
   h1{
-    font-size: 1.6rem;
+    font-size: 2rem;
     font-weight: 900;
+  }
+
+  :root{
+    --color-lilac: #F9F6FC;
+    --color-purple: #5d00c0;
+    --color-green-light: #dcf4f2;
+    --color-green-dark: #00a48c;
+    --color-white: #fff;
+    --color-black: #000; 
   }
 `;
