@@ -10,12 +10,14 @@ import { ButtonUI } from "@components/ButtonUI";
 import { useRouter } from "next/router";
 import { FiltersContext } from "@context/FiltersContext";
 import { useGetYears } from "@services/GET/useGetYears";
+import { dehydrate, QueryClient } from "react-query";
 
-export default function Home(props: { optionsBrands: IOptionsSelect[] }) {
+export default function Home() {
   const { filters, setFilters, options, setOptions } = useContext(
     FiltersContext as Context<IContext>
   );
 
+  const { dataBrands } = useGetBrands()
   const { dataModels } = useGetModels(filters.brands);
   const { dataYears } = useGetYears(filters);
 
@@ -35,6 +37,15 @@ export default function Home(props: { optionsBrands: IOptionsSelect[] }) {
       return false;
     } else return true;
   }
+
+  useEffect(() => {
+    if (dataBrands) {
+      setOptions({
+        ...options,
+        brands: getOptions(dataBrands, "Marcas"),
+      });
+    }
+  }, [dataBrands]);
 
   useEffect(() => {
     if (dataModels) {
@@ -58,10 +69,6 @@ export default function Home(props: { optionsBrands: IOptionsSelect[] }) {
     setFilters({ brands: " ", models: " ", years: " " });
   }, []);
 
-  useEffect(() => {
-    console.log(props, "prrrrroooooops");
-  }, [props]);
-
   return (
     <S.Container>
       <Head>
@@ -79,7 +86,7 @@ export default function Home(props: { optionsBrands: IOptionsSelect[] }) {
             onChange={(event) => {
               setFilters({ ...filters, brands: event.target.value });
             }}
-            options={props.optionsBrands}
+            options={options.brands}
             value={filters.brands}
             defaultValue={filters.brands}
             maxWidth={"25rem"}
@@ -125,26 +132,15 @@ export default function Home(props: { optionsBrands: IOptionsSelect[] }) {
 
 
 export async function getStaticProps() {
-  const data = await fetch(
-    "https://parallelum.com.br/fipe/api/v1/carros/marcas", {method: 'get'}
-  ).then((response) => {
-    return response.json();
-  });
-  
-  function getOptions(data: IResponse[], nameSelect: string) {
-    if (data) {
-      let options = data.map((element) => {
-        return { label: element.nome, value: element.codigo };
-      });
-      return [{ label: nameSelect, value: " " }, ...options];
-    } else return [{ label: nameSelect, value: " " }];
-  }
-
-  const optionsBrands = getOptions(data, "Marcas");
-
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(["getBrands"], () =>
+    fetch("https://parallelum.com.br/fipe/api/v1/carros/marcas").then((res) =>
+      res.json()
+    )
+  );
   return {
     props: {
-      optionsBrands,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 }
