@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { FiltersContext } from "@context/FiltersContext";
 import { useGetYears } from "@services/GET/useGetYears";
 import { dehydrate, QueryClient } from "react-query";
+import { API } from "@services/api";
 
 export default function Home() {
   const { filters, setFilters, options, setOptions } = useContext(
@@ -130,14 +131,12 @@ export default function Home() {
   );
 }
 
-
 export async function getStaticProps() {
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(["getBrands"], () =>
-    fetch("https://parallelum.com.br/fipe/api/v1/carros/marcas").then((res) =>
-      res.json()
-    )
-  );
+  await queryClient.prefetchQuery(["getBrands"], async () => {
+    const { data } = await API.get("/fipe/api/v1/carros/marcas");
+    return data;
+  });
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
