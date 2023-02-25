@@ -2,24 +2,29 @@
 import Head from "next/head";
 import * as S from "@styles/pages/Home";
 import { SelectUI } from "@components/SelectUI";
-import { useEffect, useState } from "react";
+import { Context, useContext, useEffect, useState } from "react";
 import { useGetBrands } from "@services/GET/useGetBrands";
 import { useGetModelsAndYears } from "@services/GET/useGetModelsAndYears";
 import { ButtonUI } from "@components/ButtonUI";
 import { useRouter } from "next/router";
+import { FiltersContext } from "@context/FiltersContext";
 
 export default function Home() {
-  const [filters, setFilters] = useState({ brands: " ", models: ' ', years: ' ' });
+  const { filters, setFilters } = useContext(
+    FiltersContext as Context<IContext>
+  );
+  
   const [options, setOptions] = useState({
     brands: [{ label: "Marcas", value: " " }],
     models: [{ label: "Modelos", value: " " }],
     years: [{ label: "Anos", value: " " }],
   });
 
-  const { dataBrands, isLoadingBrands } = useGetBrands();
-  const { dataModels, isLoadingModels } = useGetModelsAndYears(filters.brands);
+  const { dataBrands } = useGetBrands();
+  const { dataModels } = useGetModelsAndYears(filters.brands);
 
   const navigate = useRouter()
+  
 
   function getOptions(data: IResponse[], nameSelect: string) {
     if (data) {
